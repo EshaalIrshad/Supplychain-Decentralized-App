@@ -1,0 +1,183 @@
+.history-wrapper {
+  width: 100%;
+  max-width: 860px;
+
+  .history-card {
+    width: 100%;
+    margin: 10px 10px;
+  }
+
+  .history-search-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .history-search-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #646cff;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  .history-search-row input::placeholder {
+    color: #bbb;
+  }
+  .history-search-row input:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 5px #1a73e8;
+  }
+
+  /* ── Progress bar ─────────────────────────────────────────── */
+  .progress-track {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .progress-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+  }
+
+  .progress-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: transparent;
+    transition: all 0.3s;
+  }
+
+  .progress-node.done .progress-dot {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+  }
+
+  .progress-node.current .progress-dot {
+    background: #f0ad4e;
+    border-color: #f0ad4e;
+    color: #363a5e;
+    box-shadow: 0 0 0 4px rgba(240, 173, 78, 0.25);
+  }
+
+  .progress-label {
+    font-size: 0.72rem;
+    color: #9ba0c2;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .progress-node.done .progress-label {
+    color: #27ae60;
+  }
+  .progress-node.current .progress-label {
+    color: #f0ad4e;
+    font-weight: bold;
+  }
+
+  .progress-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    margin-top: 13px; /* align with dot center */
+    min-width: 24px;
+    transition: background 0.3s;
+  }
+  .progress-line.done {
+    background: #27ae60;
+  }
+
+  /* ── Timeline ─────────────────────────────────────────────── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .timeline-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+  }
+
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #f0ad4e;
+    flex-shrink: 0;
+  }
+
+  .tl-line {
+    width: 2px;
+    flex: 1;
+    min-height: 32px;
+    background: rgba(240, 173, 78, 0.3);
+    margin: 4px 0;
+  }
+
+  .timeline-body {
+    padding-bottom: 20px;
+    flex: 1;
+    min-width: 0;
+    word-break: break-all;
+  }
+
+  .tl-stage {
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 3px;
+  }
+
+  .tl-time {
+    font-size: 0.82rem;
+    color: #9ba0c2;
+    margin-bottom: 4px;
+  }
+
+  .tl-address {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .tl-addr-label {
+    font-size: 0.75rem;
+    color: #9ba0c2;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .mono-address {
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: #c5c8e0;
+    word-break: break-all;
+  }
+  .mono-address.small {
+    font-size: 0.78rem;
+  }
+}

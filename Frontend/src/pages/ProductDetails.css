@@ -1,0 +1,54 @@
+.details-wrapper {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.details-card { width: 100%; }
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.dfield { display: flex; flex-direction: column; gap: 3px; }
+.dfield-full { grid-column: 1 / -1; }
+
+.dfield-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ba0c2;
+}
+
+.dfield-value {
+  font-size: 0.95rem;
+  color: white;
+  word-break: break-all;
+}
+
+.dfield-value.mono { font-family: monospace; font-size: 0.82rem; }
+
+.stage-badge {
+  display: inline-block;
+  background: rgba(240,173,78,0.2);
+  border: 1px solid #f0ad4e;
+  color: #f0ad4e;
+  font-size: 0.82rem;
+  font-weight: bold;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+
+.details-nav {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
+}

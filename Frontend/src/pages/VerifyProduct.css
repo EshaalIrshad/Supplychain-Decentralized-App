@@ -1,0 +1,81 @@
+.verify-wrapper {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.verify-card { width: 100%; }
+
+.verify-search-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.verify-search-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #646cff;
+  font-size: 0.95rem;
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.verify-search-row input::placeholder { color: #bbb; }
+.verify-search-row input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 5px #1a73e8;
+}
+
+.verify-results { display: flex; flex-direction: column; gap: 0; }
+
+.verify-section-label {
+  font-size: 0.78rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ba0c2;
+  margin-bottom: 10px;
+}
+
+.verify-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.vfield {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vfield-full { grid-column: 1 / -1; }
+
+.vfield-label {
+  font-size: 0.78rem;
+  color: #9ba0c2;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vfield-value {
+  font-size: 0.95rem;
+  color: white;
+  word-break: break-all;
+}
+
+.vfield-value.mono { font-family: monospace; font-size: 0.82rem; }
+
+.verify-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
