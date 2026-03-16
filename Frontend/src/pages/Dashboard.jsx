@@ -21,12 +21,12 @@ function Dashboard() {
   const { account, role, connectWallet, refreshRole, getProvider } =
     useWallet();
 
-  // ── Role assignment state ──────────────────────────────────
+  // Role assignment state
   const [selectedRole, setSelectedRole] = useState("Manufacturer");
   const [roleStatus, setRoleStatus] = useState("");
   const [roleLoading, setRoleLoading] = useState(false);
 
-  // ── Register product state ─────────────────────────────────
+  // Register product state
   const [productId, setProductId] = useState("");
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
@@ -34,7 +34,7 @@ function Dashboard() {
   const [regStatus, setRegStatus] = useState("");
   const [regLoading, setRegLoading] = useState(false);
 
-  // ── 1. Assign role on-chain via MetaMask ───────────────────
+  //  Assign role on-chain via MetaMask
   const [targetAddress, setTargetAddress] = useState("");
 
   const handleAssignRole = async () => {
@@ -64,8 +64,8 @@ function Dashboard() {
       setRoleStatus("info:Transaction submitted, waiting for confirmation…");
       await tx.wait();
 
-      // Tell the backend to create/update the off-chain profile
-      // (backend will verify the role on-chain before saving)
+      // backend to create/update the off-chain profile
+      // backend will verify the role on-chain before saving
       await fetch(`${API_BASE}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +84,7 @@ function Dashboard() {
     }
   };
 
-  // ── 2. Register product: MetaMask signs → backend records ──
+  // Register product: MetaMask signs → backend records
   const handleRegisterProduct = async () => {
     if (!account) {
       setRegStatus("error:Connect your wallet first.");
@@ -113,14 +113,14 @@ function Dashboard() {
       const signer = await provider.getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-      // Step 1: Call RegisterProduct (capital R) on the blockchain
+      // Call RegisterProduct (capital R) on the blockchain
       const tx = await contract.RegisterProduct(Number(productId), productName);
       setRegStatus("info:Transaction submitted, waiting for confirmation…");
       const receipt = await tx.wait();
 
       setRegStatus("info:Confirmed on blockchain. Saving metadata to backend…");
 
-      // Step 2: Send tx hash + off-chain metadata to backend
+      // Send tx hash + off-chain metadata to backend
       const res = await fetch(`${API_BASE}/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -159,7 +159,7 @@ function Dashboard() {
     }
   };
 
-  // ── Helper: split "type:message" status strings ────────────
+  // split "type:message" status strings
   const parseStatus = (s) => {
     if (!s) return null;
     const [type, ...rest] = s.split(":");
@@ -172,7 +172,7 @@ function Dashboard() {
     <div className="dashboard-wrapper">
       <h1 className="page-title">Supply Chain Dashboard</h1>
 
-      {/* ── Wallet panel ─────────────────────────────────── */}
+      {/* Wallet panel */}
       {!account && (
         <div
           className="card dashboard-card"
@@ -192,10 +192,10 @@ function Dashboard() {
         </div>
       )}
 
-      {/* ── Two-column layout once connected ─────────────── */}
+      {/* Two-column layout once connected */}
       {account && (
         <div className="dashboard-grid">
-          {/* Left: Assign role */}
+          {/* Assign role */}
           <div className="card dashboard-card">
             <p className="section-title">Assign your role</p>
             <p
@@ -217,9 +217,7 @@ function Dashboard() {
               }}
             >
               <strong>Note:</strong> Only the contract owner (deployer wallet)
-              can assign roles. If you need a role assigned, ask the admin to
-              call <code>assignRole(yourAddress, roleNumber)</code>— or if you
-              are the deployer, use the admin panel below.
+              can assign roles.
             </div>
 
             <div className="form-row" style={{ marginBottom: 16 }}>
@@ -263,7 +261,7 @@ function Dashboard() {
             )}
           </div>
 
-          {/* Right: Register product */}
+          {/* Register product */}
           <div className="card dashboard-card">
             <p className="section-title">Register product</p>
             <p
