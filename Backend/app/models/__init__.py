@@ -1,9 +1,7 @@
 from datetime import datetime
 from app import db
 
-# ------------------------------------------------------------
 # What goes in the DATABASE vs the BLOCKCHAIN
-#
 # BLOCKCHAIN stores (do NOT duplicate here):
 #   - product owner address
 #   - product stage / history
@@ -15,7 +13,7 @@ from app import db
 #   - product metadata             (description, category, image)
 #   - uploaded documents           (URLs + file hashes)
 #   - transaction log              (tx hashes for quick lookup)
-# ------------------------------------------------------------
+
 
 
 class User(db.Model):

@@ -32,7 +32,7 @@ def create_app():
             print(f"✗ Blockchain service failed to initialise: {e}")
             print("  Start the Hardhat node and check CONTRACT_ADDRESS in .env")
 
-    # Blueprints
+    # Blueprints way to organise routes, reusable components
     from app.routes.user_routes    import user_bp
     from app.routes.product_routes import product_bp
 

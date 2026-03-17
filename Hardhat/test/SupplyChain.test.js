@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers }  = require("hardhat");
+const { ethers } = require("hardhat");
 
 describe("SupplyChain Contract", function () {
   let supplyChain;
@@ -10,24 +10,26 @@ describe("SupplyChain Contract", function () {
       await ethers.getSigners();
 
     const Factory = await ethers.getContractFactory("SupplyChain");
-    supplyChain   = await Factory.deploy();
+    supplyChain = await Factory.deploy();
     await supplyChain.waitForDeployment();
 
     // Only contractOwner can assign roles — all setup goes through owner
-    await supplyChain.connect(contractOwner).assignRole(manufacturer.address, 1);
-    await supplyChain.connect(contractOwner).assignRole(distributor.address,  2);
-    await supplyChain.connect(contractOwner).assignRole(retailer.address,     3);
-    await supplyChain.connect(contractOwner).assignRole(consumer.address,     4);
+    await supplyChain
+      .connect(contractOwner)
+      .assignRole(manufacturer.address, 1);
+    await supplyChain.connect(contractOwner).assignRole(distributor.address, 2);
+    await supplyChain.connect(contractOwner).assignRole(retailer.address, 3);
+    await supplyChain.connect(contractOwner).assignRole(consumer.address, 4);
   });
 
-  // ── DEPLOYMENT ──────────────────────────────────────────────────────────
+  // ── DEPLOYMENT
   describe("Deployment", function () {
     it("Should deploy and set contractOwner to deployer", async function () {
       expect(await supplyChain.contractOwner()).to.equal(contractOwner.address);
     });
   });
 
-  // ── ROLE ASSIGNMENT ─────────────────────────────────────────────────────
+  // ── ROLE ASSIGNMENT
   describe("assignRole", function () {
     it("Owner can assign roles", async function () {
       const role = await supplyChain.getRole(manufacturer.address);
@@ -36,13 +38,15 @@ describe("SupplyChain Contract", function () {
 
     it("Non-owner CANNOT assign roles", async function () {
       await expect(
-        supplyChain.connect(stranger).assignRole(stranger.address, 1)
+        supplyChain.connect(stranger).assignRole(stranger.address, 1),
       ).to.be.revertedWith("Only contract owner can assign roles");
     });
 
     it("Owner can reassign a role", async function () {
       // Promote distributor to manufacturer
-      await supplyChain.connect(contractOwner).assignRole(distributor.address, 1);
+      await supplyChain
+        .connect(contractOwner)
+        .assignRole(distributor.address, 1);
       expect(await supplyChain.getRole(distributor.address)).to.equal(1);
     });
   });
@@ -71,14 +75,14 @@ describe("SupplyChain Contract", function () {
 
     it("Non-manufacturer CANNOT register a product", async function () {
       await expect(
-        supplyChain.connect(consumer).RegisterProduct(2, "Tablet")
+        supplyChain.connect(consumer).RegisterProduct(2, "Tablet"),
       ).to.be.revertedWith("Not authorized for this action");
     });
 
     it("Duplicate product ID is rejected", async function () {
       await supplyChain.connect(manufacturer).RegisterProduct(1, "Laptop");
       await expect(
-        supplyChain.connect(manufacturer).RegisterProduct(1, "Laptop2")
+        supplyChain.connect(manufacturer).RegisterProduct(1, "Laptop2"),
       ).to.be.revertedWith("Product already exists");
     });
   });
@@ -104,26 +108,30 @@ describe("SupplyChain Contract", function () {
 
     it("CANNOT skip a stage (Registered -> Shipped)", async function () {
       await expect(
-        supplyChain.connect(manufacturer).updateStage(1, 2) // skip Manufactured
-      ).to.be.revertedWith("Invalid stage transition: stages must advance in order");
+        supplyChain.connect(manufacturer).updateStage(1, 2), // skip Manufactured
+      ).to.be.revertedWith(
+        "Invalid stage transition: stages must advance in order",
+      );
     });
 
     it("CANNOT go backwards (Manufactured -> Registered)", async function () {
       await supplyChain.connect(manufacturer).updateStage(1, 1); // -> Manufactured
       await expect(
-        supplyChain.connect(manufacturer).updateStage(1, 0) // back to Registered
-      ).to.be.revertedWith("Invalid stage transition: stages must advance in order");
+        supplyChain.connect(manufacturer).updateStage(1, 0), // back to Registered
+      ).to.be.revertedWith(
+        "Invalid stage transition: stages must advance in order",
+      );
     });
 
     it("Non-owner CANNOT update stage", async function () {
       await expect(
-        supplyChain.connect(distributor).updateStage(1, 1)
+        supplyChain.connect(distributor).updateStage(1, 1),
       ).to.be.revertedWith("Only current owner can update stage");
     });
 
     it("Updating stage on non-existent product fails", async function () {
       await expect(
-        supplyChain.connect(manufacturer).updateStage(99, 1)
+        supplyChain.connect(manufacturer).updateStage(99, 1),
       ).to.be.revertedWith("Product does not exist");
     });
 
@@ -137,38 +145,44 @@ describe("SupplyChain Contract", function () {
     });
   });
 
-  // ── TRANSFER OWNERSHIP ──────────────────────────────────────────────────
+  // ── TRANSFER OWNERSHIP
   describe("transferOwnership", function () {
     beforeEach(async function () {
       await supplyChain.connect(manufacturer).RegisterProduct(1, "Camera");
     });
 
     it("Owner can transfer to another address", async function () {
-      await supplyChain.connect(manufacturer).transferOwnership(1, distributor.address);
+      await supplyChain
+        .connect(manufacturer)
+        .transferOwnership(1, distributor.address);
       const product = await supplyChain.products(1);
       expect(product.owner).to.equal(distributor.address);
     });
 
     it("New owner can update stage after transfer", async function () {
-      await supplyChain.connect(manufacturer).transferOwnership(1, distributor.address);
+      await supplyChain
+        .connect(manufacturer)
+        .transferOwnership(1, distributor.address);
       await supplyChain.connect(distributor).updateStage(1, 1); // Manufactured
       expect(await supplyChain.getCurrentStage(1)).to.equal(1);
     });
 
     it("Non-owner CANNOT transfer", async function () {
       await expect(
-        supplyChain.connect(consumer).transferOwnership(1, retailer.address)
+        supplyChain.connect(consumer).transferOwnership(1, retailer.address),
       ).to.be.revertedWith("Only current owner can transfer");
     });
 
     it("CANNOT transfer to zero address", async function () {
       await expect(
-        supplyChain.connect(manufacturer).transferOwnership(1, ethers.ZeroAddress)
+        supplyChain
+          .connect(manufacturer)
+          .transferOwnership(1, ethers.ZeroAddress),
       ).to.be.revertedWith("New owner cannot be zero address");
     });
   });
 
-  // ── GET PRODUCT HISTORY ─────────────────────────────────────────────────
+  // ── GET PRODUCT HISTORY
   describe("getProductHistory", function () {
     it("Returns full history across stage updates", async function () {
       await supplyChain.connect(manufacturer).RegisterProduct(1, "Shoes");
@@ -179,12 +193,13 @@ describe("SupplyChain Contract", function () {
     });
 
     it("Fails for non-existent product", async function () {
-      await expect(supplyChain.getProductHistory(10))
-        .to.be.revertedWith("Product does not exist");
+      await expect(supplyChain.getProductHistory(10)).to.be.revertedWith(
+        "Product does not exist",
+      );
     });
   });
 
-  // ── GET CURRENT STAGE ───────────────────────────────────────────────────
+  // ── GET CURRENT STAGE
   describe("getCurrentStage", function () {
     it("Returns Registered immediately after registration", async function () {
       await supplyChain.connect(manufacturer).RegisterProduct(1, "Watch");
@@ -198,34 +213,46 @@ describe("SupplyChain Contract", function () {
     });
 
     it("Fails for non-existent product", async function () {
-      await expect(supplyChain.getCurrentStage(99))
-        .to.be.revertedWith("Product does not exist");
+      await expect(supplyChain.getCurrentStage(99)).to.be.revertedWith(
+        "Product does not exist",
+      );
     });
   });
 
-  // ── VERIFY PRODUCT ──────────────────────────────────────────────────────
+  // ── VERIFY PRODUCT
   describe("verifyProduct", function () {
     beforeEach(async function () {
       await supplyChain.connect(manufacturer).RegisterProduct(1, "Watch");
     });
 
     it("Returns true for the real owner", async function () {
-      expect(await supplyChain.verifyProduct(1, manufacturer.address)).to.equal(true);
+      expect(await supplyChain.verifyProduct(1, manufacturer.address)).to.equal(
+        true,
+      );
     });
 
     it("Returns false for the wrong address", async function () {
-      expect(await supplyChain.verifyProduct(1, distributor.address)).to.equal(false);
+      expect(await supplyChain.verifyProduct(1, distributor.address)).to.equal(
+        false,
+      );
     });
 
     it("Returns false after ownership is transferred", async function () {
-      await supplyChain.connect(manufacturer).transferOwnership(1, distributor.address);
-      expect(await supplyChain.verifyProduct(1, manufacturer.address)).to.equal(false);
-      expect(await supplyChain.verifyProduct(1, distributor.address)).to.equal(true);
+      await supplyChain
+        .connect(manufacturer)
+        .transferOwnership(1, distributor.address);
+      expect(await supplyChain.verifyProduct(1, manufacturer.address)).to.equal(
+        false,
+      );
+      expect(await supplyChain.verifyProduct(1, distributor.address)).to.equal(
+        true,
+      );
     });
 
     it("Fails for non-existent product", async function () {
-      await expect(supplyChain.verifyProduct(5, consumer.address))
-        .to.be.revertedWith("Product does not exist");
+      await expect(
+        supplyChain.verifyProduct(5, consumer.address),
+      ).to.be.revertedWith("Product does not exist");
     });
   });
 });

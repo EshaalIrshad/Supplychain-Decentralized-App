@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 contract SupplyChain {
 
-    // ── Ownership ─────────────────────────────────────────────────────────
+    // Ownership 
     // The deployer becomes the contract owner.
     // Only the owner can assign roles to wallets.
     address public contractOwner;
@@ -17,18 +17,17 @@ contract SupplyChain {
         _;
     }
 
-    // ── Roles & access control ────────────────────────────────────────────
-    enum Role { None, Manufacturer, Distributor, Retailer, Consumer }
+    // Roles & access control
+    enum Role { None, Manufacturer, Distributor, Retailer, Consumer }   //saved as numbers
 
-    mapping(address => Role) public roles;
+    mapping(address => Role) public roles; //showing what role each wallet has
 
     modifier onlyRole(Role _role) {
-        require(roles[msg.sender] == _role, "Not authorized for this action");
+        require(roles[msg.sender] == _role, "Not authorized for this action");    //manufacturer can only register
         _;
     }
 
     // Only the contract owner (deployer) can assign roles.
-    // In the assignment context this is the lecturer / admin wallet.
     function assignRole(address user, Role role) public onlyContractOwner {
         roles[user] = role;
     }
@@ -37,7 +36,7 @@ contract SupplyChain {
         return roles[user];
     }
 
-    // ── Product & tracking ────────────────────────────────────────────────
+    // Product & tracking 
     enum Stage { Registered, Manufactured, Shipped, Delivered, Sold }
 
     struct StatusUpdate {
@@ -50,36 +49,37 @@ contract SupplyChain {
         uint          id;
         string        name;
         address       owner;
-        Stage         currentStage;   // <-- added so we can read it without history
+        Stage         currentStage;   
         StatusUpdate[] history;
     }
 
-    mapping(uint => Product) public products;
+    mapping(uint => Product) public products; //mapping the product id to product struct
 
-    // ── Events ────────────────────────────────────────────────────────────
+    // Events
     event ProductRegistered(uint id, string name, address owner);
     event StageUpdated(uint id, Stage stage, address updater);
     event OwnershipTransferred(uint id, address previousOwner, address newOwner);
 
-    // ── Product functions ─────────────────────────────────────────────────
+    // Product functions
 
     function RegisterProduct(uint id, string memory name)
         public onlyRole(Role.Manufacturer)
     {
         require(products[id].owner == address(0), "Product already exists");
 
-        Product storage p = products[id];
+        Product storage p = products[id];   //ponting to the same prodcut struct stored in blockchain 
+        //any chnages to p directly updates the contract storage
         p.id           = id;
         p.name         = name;
         p.owner        = msg.sender;
         p.currentStage = Stage.Registered;
-        p.history.push(StatusUpdate(Stage.Registered, block.timestamp, msg.sender));
+        p.history.push(StatusUpdate(Stage.Registered, block.timestamp, msg.sender));  //records the history and add an entry into history array
 
         emit ProductRegistered(id, name, msg.sender);
     }
 
     // Enforce that stages can only advance in order:
-    // Registered -> Manufactured -> Shipped -> Delivered -> Sold
+    // Registered - Manufactured - Shipped - Delivered - Sold
     function updateStage(uint id, Stage newStage) public {
         Product storage p = products[id];
         require(p.owner != address(0), "Product does not exist");
@@ -102,12 +102,12 @@ contract SupplyChain {
         require(msg.sender == p.owner, "Only current owner can transfer");
         require(newOwner != address(0), "New owner cannot be zero address");
 
-        address oldOwner = p.owner;
-        p.owner = newOwner;
+        address oldOwner = p.owner; //store previous owner 
+        p.owner = newOwner;   //store new owner 
         emit OwnershipTransferred(id, oldOwner, newOwner);
     }
 
-    // ── View functions ────────────────────────────────────────────────────
+    // View functions
 
     // Returns the current stage without fetching full history
     function getCurrentStage(uint id) public view returns (Stage) {
@@ -116,7 +116,7 @@ contract SupplyChain {
     }
 
     function getProductHistory(uint id) public view returns (StatusUpdate[] memory) {
-        require(products[id].owner != address(0), "Product does not exist");
+        require(products[id].owner != address(0), "Product does not exist");   //is registered 
         return products[id].history;
     }
 
